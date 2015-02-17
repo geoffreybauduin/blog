@@ -3,16 +3,21 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: Developer's life
 subtitle:
-description:
-author: John Doe
-email:
-language:
+description: Some stuff about a developer's life
+author: Geoffrey Bauduin
+email: bauduin.geo@gmail.com 
+language: English
+
+deploy:
+  type: github
+  repository: https://github.com/lght/lght.github.io
+  branch: master
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://lght.github.io
 root: /
 permalink: :year/:month/:day/:title/
 tag_dir: tags
