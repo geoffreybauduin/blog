@@ -1,6 +1,9 @@
 title: How everybody should use git
 date: 2015-04-09 17:22:37
-tags: git, usage, guidelines
+tags: 
+ - git
+ - usage
+ - guidelines
 ---
 
 # Architecture
