@@ -87,3 +87,4 @@ theme: landscape
 deploy:
 	type: git
 	repo: https://github.com/lght/lght.github.io
+  branch: master
