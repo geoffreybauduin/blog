@@ -3,6 +3,8 @@ title: Datetime and localization in Python
 date: 2016-05-16 14:03:48
 tags:
 - python
+categories:
+- Code
 ---
 
 Last week, I came across an issue we frequently have on our architecture, at work. We are testing our software with SQLite on our computers, but the production server isn't based on SQLite (don't worry, we have a huge pipeline with testing to ensure this is working).

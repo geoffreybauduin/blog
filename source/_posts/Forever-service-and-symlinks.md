@@ -5,7 +5,6 @@ tags:
  - symlinks
  - forever
 categories:
- - Code
  - Admin sys
 ---
 
