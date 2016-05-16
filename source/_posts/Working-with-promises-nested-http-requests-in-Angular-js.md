@@ -16,7 +16,7 @@ One of my colleague, who is totally new to Angular, was asking me about how I wo
 Knowing some stuff about Angular, I directly told her she could use *promises*, with the [`$q`](https://docs.angularjs.org/api/ng/service/$q) package from Angular, and gave her some piece of code so that she could understand the whole thing.
 I thought that it could be useful to someone else, so I am just going to leave this here
 
-```
+```javascript
 function fn1 () {
   var deferred = $q.defer();
   $http.get("http://a.com/first").then(function (response) {
