@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Working with promises: nested http requests in Angular.js | Developer&#39;s life</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="It’s been a while since I posted here, but I thought I could share something that happened to me at work today.I am now almost entirely dedicated to backend development, but sometimes, I need to take">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Working with promises: nested http requests in Angular.js">
+<meta property="og:url" content="http://geoffreybauduin.github.io/blog/2016/05/10/Working-with-promises-nested-http-requests-in-Angular-js/index.html">
+<meta property="og:site_name" content="Developer's life">
+<meta property="og:description" content="It’s been a while since I posted here, but I thought I could share something that happened to me at work today.I am now almost entirely dedicated to backend development, but sometimes, I need to take">
+<meta property="og:updated_time" content="2016-05-16T12:08:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Working with promises: nested http requests in Angular.js">
+<meta name="twitter:description" content="It’s been a while since I posted here, but I thought I could share something that happened to me at work today.I am now almost entirely dedicated to backend development, but sometimes, I need to take">
+  
+    <link rel="alternate" href="/atom.xml" title="Developer&#39;s life" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-47269624-5', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Developer&#39;s life</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://geoffreybauduin.github.io/blog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Working-with-promises-nested-http-requests-in-Angular-js" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/10/Working-with-promises-nested-http-requests-in-Angular-js/" class="article-date">
+  <time datetime="2016-05-10T20:49:01.000Z" itemprop="datePublished">2016-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Code/">Code</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Working with promises: nested http requests in Angular.js
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>It’s been a while since I posted here, but I thought I could share something that happened to me at work today.<br>I am now almost entirely dedicated to backend development, but sometimes, I need to take one for the team and work on frontend. We are using Angular, and we’ve been doing some amazing stuff so far with that.</p>
+<p>One of my colleague, who is totally new to Angular, was asking me about how I would do the following: “be able to execute the function of my choice when a 2-step http request has been performed”.</p>
+<p>Knowing some stuff about Angular, I directly told her she could use <em>promises</em>, with the <a href="https://docs.angularjs.org/api/ng/service/$q" target="_blank" rel="external"><code>$q</code></a> package from Angular, and gave her some piece of code so that she could understand the whole thing.<br>I thought that it could be useful to someone else, so I am just going to leave this here</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fn1</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> deferred = $q.defer();</span><br><span class="line">  $http.get(<span class="string">"http://a.com/first"</span>).then(<span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">    $http.get(<span class="string">"http://a.com/second"</span>).then(<span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">      deferred.resolve(response);</span><br><span class="line">    &#125;, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">      deferred.reject(response);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">    deferred.reject(response);</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> deferred.promise;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fn1().then(<span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"success"</span>);</span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">"failure"</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">fn1().then(<span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.info(<span class="string">"another success"</span>);</span><br><span class="line">&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">response</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.info(<span class="string">"another failure"</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>With this simple <code>fn1</code> function, you can have a multiple behaviors linked to the same requests process.</p>
+<p><a href="https://gist.github.com/lght/ea5b2e633463f87aacf2bbf61d5ee8c6" target="_blank" rel="external">Gist link</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://geoffreybauduin.github.io/blog/2016/05/10/Working-with-promises-nested-http-requests-in-Angular-js/" data-id="cj2z51n9g00045f15bc2nrowh" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/angular-js/">angular.js</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/javascript/">javascript</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/05/16/Datetime-and-localization-in-Python/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Datetime and localization in Python
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/04/09/How-everybody-should-use-git/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">How everybody should use git</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Admin-sys/">Admin sys</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Code/">Code</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/angular-js/">angular.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/forever/">forever</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/guidelines/">guidelines</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javascript/">javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nodejs/">nodejs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/symlinks/">symlinks</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/usage/">usage</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/angular-js/" style="font-size: 10px;">angular.js</a> <a href="/tags/forever/" style="font-size: 10px;">forever</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/guidelines/" style="font-size: 10px;">guidelines</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/nodejs/" style="font-size: 20px;">nodejs</a> <a href="/tags/python/" style="font-size: 10px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/symlinks/" style="font-size: 10px;">symlinks</a> <a href="/tags/usage/" style="font-size: 10px;">usage</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/04/">April 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/05/16/Datetime-and-localization-in-Python/">Datetime and localization in Python</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/10/Working-with-promises-nested-http-requests-in-Angular-js/">Working with promises: nested http requests in Angular.js</a>
+          </li>
+        
+          <li>
+            <a href="/2015/04/09/How-everybody-should-use-git/">How everybody should use git</a>
+          </li>
+        
+          <li>
+            <a href="/2015/03/02/Redis-and-multiple-node-instances/">Redis and multiple node instances</a>
+          </li>
+        
+          <li>
+            <a href="/2015/02/20/Forever-service-and-symlinks/">Forever service and symlinks</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Geoffrey Bauduin &lt;bauduin.geo@gmail.com&gt;<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
